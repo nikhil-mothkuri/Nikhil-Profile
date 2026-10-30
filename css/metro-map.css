@@ -1,0 +1,384 @@
+/* ===================================================================
+   INTERACTIVE CAREER METRO MAP & JOURNEY GRAPH
+   Apple Maps / Transit Vector Interface
+   =================================================================== */
+
+.metro-experience-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Apple Segmented Filter Bar */
+.metro-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.metro-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.metro-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.metro-filter-btn:hover {
+  color: var(--text-bright);
+  background: var(--bg-subtle-hover);
+}
+
+.metro-filter-btn.active {
+  background: var(--bg-subtle-active);
+  color: var(--text-bright);
+  box-shadow: var(--shadow-sm);
+}
+
+.metro-filter-btn[data-line="systems"].active {
+  color: #fff;
+  background: var(--line-systems);
+  border-color: var(--line-systems);
+}
+
+.metro-filter-btn[data-line="ai"].active {
+  color: #fff;
+  background: var(--line-ai);
+  border-color: var(--line-ai);
+}
+
+.metro-filter-btn[data-line="leadership"].active {
+  color: #fff;
+  background: var(--line-leadership);
+  border-color: var(--line-leadership);
+}
+
+.line-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.metro-zoom-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 8px;
+}
+
+/* Metro Map Grid Layout */
+.metro-map-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Apple Transit Canvas */
+.metro-canvas-container {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metro-canvas-container::before {
+  content: 'TRANSIT VIEW // SYSTEM ARCHITECTURE TRAJECTORY';
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.metro-svg-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metro-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
+  overflow: visible;
+}
+
+/* Metro Guides Grid Lines */
+.metro-grid-guides line {
+  stroke: var(--svg-grid-line);
+}
+
+/* Apple Vector Tracks */
+.metro-line-track {
+  fill: none;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity var(--transition-smooth), stroke-width var(--transition-smooth);
+}
+
+.metro-line-track.dimmed {
+  opacity: 0.15;
+}
+
+.metro-line-track.active-track {
+  opacity: 1;
+  stroke-width: 7px;
+}
+
+.track-systems {
+  stroke: var(--line-systems);
+}
+
+.track-ai {
+  stroke: var(--line-ai);
+}
+
+.track-leadership {
+  stroke: var(--line-leadership);
+}
+
+/* SVG Station Nodes - Apple Transit Pin Style */
+.metro-station-group {
+  cursor: pointer;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.metro-station-group:hover {
+  transform: scale(1.08);
+}
+
+.metro-station-group.dimmed {
+  opacity: 0.2;
+}
+
+.station-circle {
+  fill: var(--bg-surface);
+  transition: all var(--transition-fast);
+}
+
+.station-inner-dot {
+  fill: var(--text-bright);
+  transition: all var(--transition-fast);
+}
+
+.station-hub-outer {
+  opacity: 0.5;
+  transition: all var(--transition-fast);
+}
+
+.station-label {
+  font-family: var(--font-main);
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--text-primary);
+  pointer-events: none;
+  transition: fill var(--transition-fast);
+}
+
+.station-year-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 400;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+.metro-station-group.active .station-label {
+  fill: var(--text-bright);
+  font-weight: 600;
+}
+
+.station-beacon {
+  display: none;
+}
+
+.metro-station-group.active .station-beacon {
+  display: block;
+}
+
+/* Apple Station Dossier Card */
+.station-dossier-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all var(--transition-smooth);
+}
+
+.dossier-header-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 18px;
+}
+
+.dossier-track-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dossier-period {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.dossier-role-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.dossier-company {
+  font-size: 1rem;
+  color: var(--apple-blue);
+  font-weight: 500;
+}
+
+.dossier-company-location {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.dossier-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.dossier-metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.dossier-metric-val {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.02em;
+}
+
+.dossier-metric-lbl {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.dossier-highlights-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dossier-highlights-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.dossier-highlights-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--apple-blue);
+  font-size: 0.85rem;
+}
+
+.dossier-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.dossier-tag {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 992px) {
+  .metro-map-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,443 @@
+/* ===================================================================
+   HERO SECTION, AVATAR CARD & ABOUT MATRIX
+   Apple Pro Keynote Presentation & Human Interface Aesthetic
+   =================================================================== */
+
+.hero-section {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 130px;
+  padding-bottom: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle Apple Atmospheric Ambient Light */
+.ambient-glow-1 {
+  position: absolute;
+  top: 5%;
+  left: 20%;
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(var(--apple-blue-rgb), 0.05) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-2 {
+  position: absolute;
+  top: 20%;
+  right: 15%;
+  width: 500px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(var(--apple-purple-rgb), 0.04) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.hero-supertag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--apple-blue);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero-headline {
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--text-bright);
+}
+
+.hero-bio {
+  font-size: 1.18rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 580px;
+  font-weight: 400;
+}
+
+.hero-bio strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+/* Avatar Showcase - Apple Hardware Product Style */
+.hero-visual-deck {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-frame {
+  position: relative;
+  width: 360px;
+  height: 420px;
+  border-radius: var(--radius-xl);
+  padding: 1px;
+  background: linear-gradient(180deg, var(--border-medium) 0%, var(--border-subtle) 100%);
+  box-shadow: var(--shadow-elevated);
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.avatar-frame:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-modal);
+}
+
+.avatar-image-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius-xl) - 1px);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-deep);
+}
+
+.avatar-image-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+
+.avatar-overlay-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.15) 30%, transparent 60%);
+  pointer-events: none;
+}
+
+.avatar-status-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+}
+
+.avatar-status-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+/* Micro Metric Badges - Apple Docked Widget Style */
+.floating-metric-card {
+  position: absolute;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+  z-index: 2;
+  transition: transform var(--transition-fast);
+}
+
+.floating-metric-card:hover {
+  transform: translateY(-2px);
+}
+
+.floating-metric-card.top-left {
+  top: 24px;
+  left: -28px;
+}
+
+.floating-metric-card.bottom-right {
+  bottom: 24px;
+  right: -24px;
+}
+
+.floating-metric-card.bottom-left {
+  bottom: -16px;
+  left: 20px;
+}
+
+.floating-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--apple-blue);
+}
+
+.floating-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-value {
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-bright);
+}
+
+.floating-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Keynote Stats Ribbon */
+.stats-ribbon {
+  margin-top: 72px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-xl);
+  padding: 32px 40px;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid var(--border-subtle);
+  padding-right: 24px;
+}
+
+.stat-item:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* About Section & Apple Segmented Skill Matrix */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.about-narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* iOS Segmented Control Tabs */
+.skill-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  background: var(--bg-subtle);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  margin-bottom: 24px;
+  border: 1px solid var(--border-subtle);
+}
+
+.skill-tab-btn {
+  padding: 7px 16px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.skill-tab-btn.active {
+  background: var(--bg-subtle-active);
+  color: var(--text-bright);
+  box-shadow: var(--shadow-sm);
+}
+
+.skill-tab-btn:hover:not(.active) {
+  color: var(--text-bright);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.skill-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  transition: all var(--transition-fast);
+}
+
+.skill-card:hover {
+  border-color: var(--border-medium);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.skill-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-bright);
+}
+
+.skill-level-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--apple-blue);
+  font-weight: 500;
+}
+
+.skill-bar-wrap {
+  height: 4px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--apple-blue);
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.skill-proof {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+@media (max-width: 992px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 48px;
+  }
+  
+  .hero-content {
+    align-items: center;
+  }
+  
+  .hero-cta-group {
+    justify-content: center;
+  }
+
+  .hero-bio {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .floating-metric-card.top-left {
+    left: 0;
+  }
+  .floating-metric-card.bottom-right {
+    right: 0;
+  }
+
+  .stats-ribbon {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .stat-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-ribbon {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 16px;
+  }
+  .stat-item:last-child {
+    border-bottom: none;
+  }
+  .avatar-frame {
+    width: 300px;
+    height: 360px;
+  }
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}

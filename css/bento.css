@@ -1,0 +1,478 @@
+/* ===================================================================
+   BENTO GRID: PERSONAL & CRAFT, EDUCATION TIMELINE & TESTIMONIALS
+   Apple Keynote Bento Box Design & Apple Watch / Music Widgets
+   =================================================================== */
+
+/* Apple Bento Grid Layout */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 240px;
+  gap: 20px;
+}
+
+.bento-item {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-xl);
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), background var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.bento-item:hover {
+  border-color: var(--border-medium);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.bento-span-2 {
+  grid-column: span 2;
+}
+
+.bento-row-span-2 {
+  grid-row: span 2;
+}
+
+.bento-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--apple-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bento-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  letter-spacing: -0.015em;
+  margin-top: 6px;
+}
+
+.bento-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-top: 6px;
+}
+
+/* Bento Tile 1: Apple Music-Style Audio Widget */
+.audio-card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-top: 14px;
+}
+
+.audio-track-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.audio-disk {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.audio-disk-center {
+  width: 12px;
+  height: 12px;
+  background: var(--apple-blue);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.audio-equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+}
+
+.eq-bar {
+  width: 3px;
+  background: var(--apple-blue);
+  border-radius: 2px;
+  height: 4px;
+  transition: height 0.2s ease;
+}
+
+.playing .eq-bar:nth-child(1) { animation: bounce-eq 0.7s infinite alternate; }
+.playing .eq-bar:nth-child(2) { animation: bounce-eq 0.9s 0.2s infinite alternate; }
+.playing .eq-bar:nth-child(3) { animation: bounce-eq 0.6s 0.4s infinite alternate; }
+.playing .eq-bar:nth-child(4) { animation: bounce-eq 0.8s 0.1s infinite alternate; }
+.playing .eq-bar:nth-child(5) { animation: bounce-eq 1.1s 0.3s infinite alternate; }
+
+@keyframes bounce-eq {
+  0% { height: 4px; }
+  100% { height: 18px; }
+}
+
+.audio-play-toggle {
+  background: var(--bg-subtle-active);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-bright);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.audio-play-toggle:hover {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  transform: scale(1.05);
+}
+
+/* Bento Tile 2: Apple Books Reading Shelf */
+.bookshelf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.book-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.book-card:hover {
+  background: var(--bg-subtle-hover);
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+}
+
+.book-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.3;
+}
+
+.book-author {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.book-takeaway {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: auto;
+  line-height: 1.4;
+}
+
+/* Bento Tile 3: Apple Watch Activity Ring Style */
+.fitness-widget {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 14px;
+}
+
+.fitness-ring-wrap {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+}
+
+.ring-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.ring-bg {
+  stroke: var(--border-medium);
+}
+
+.ring-progress {
+  stroke: var(--apple-green);
+  stroke-dasharray: 226;
+  stroke-dashoffset: 45;
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+.ring-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.fitness-stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fit-stat {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.fit-stat strong {
+  color: var(--apple-green);
+  font-weight: 600;
+}
+
+/* Education Timeline Section */
+.education-timeline {
+  position: relative;
+  max-width: 840px;
+  margin: 0 auto;
+  padding-left: 32px;
+}
+
+.education-timeline::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 9px;
+  width: 1px;
+  background: var(--border-medium);
+}
+
+.edu-timeline-item {
+  position: relative;
+  margin-bottom: 36px;
+}
+
+.edu-timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.edu-node-dot {
+  position: absolute;
+  left: -32px;
+  top: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-canvas);
+  border: 2px solid var(--apple-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edu-node-dot.purple {
+  border-color: var(--apple-purple);
+}
+
+.edu-node-dot.emerald {
+  border-color: var(--apple-green);
+}
+
+.edu-inner-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-bright);
+}
+
+.edu-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.edu-card:hover {
+  border-color: var(--border-medium);
+  transform: translateX(4px);
+}
+
+.edu-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.edu-degree {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  letter-spacing: -0.015em;
+}
+
+.edu-period {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.edu-school {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--apple-blue);
+  margin-bottom: 12px;
+}
+
+.edu-details {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.edu-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.edu-tag {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+/* Apple-Style Testimonials Grid */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.testimonial-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-specular);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.testimonial-card:hover {
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+}
+
+.testimonial-quote {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-subtle-active);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-bright);
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-bright);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verified-badge {
+  color: var(--apple-blue);
+  font-size: 0.8rem;
+}
+
+.author-role {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 992px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .bento-span-2 {
+    grid-column: span 1;
+  }
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+  .bookshelf-grid {
+    grid-template-columns: 1fr;
+  }
+}
