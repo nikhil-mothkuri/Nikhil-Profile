@@ -26,6 +26,11 @@ An executive portfolio engineered with Apple Human Interface Guidelines and mode
 - **Executive Brief & Clean Printable CV**:
   - Quick-pitch modal for engineering leadership and strategic technology advisory.
   - 1-click formatted printable CV ready for export or review.
+- **In-Page Admin Editor & 1-Click GitHub Publisher**:
+  - Discreet authenticated admin mode on `nikhilai.in` via GitHub Personal Access Token (`⌘K` → Admin Login, or `#admin`).
+  - Visual inline click-to-edit for hero text, bio, and status.
+  - Structured Inspector modal for managing Career Metro stations, skills, perspectives, and bento items.
+  - 1-click GitHub API commit that directly updates `js/data.js` on `main`, automatically triggering live deployment via GitHub Pages.
 
 ---
 

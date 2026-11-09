@@ -20,6 +20,7 @@ class CommandPaletteEngine {
       { id: "recruiter", title: "Executive Summary Brief", category: "Overview", icon: "›", action: () => window.resumeModal.openPitchModal() },
       { id: "resume", title: "Print or Export Curriculum Vitae", category: "Document", icon: "›", action: () => window.resumeModal.openResumeModal() },
       { id: "theme", title: "Toggle Appearance (Light / Dark Mode)", category: "Appearance", icon: "›", action: () => window.themeManager.toggle() },
+      { id: "admin", title: "Admin Login & Content Editor", category: "Admin", icon: "›", action: () => window.adminManager.handleTriggerClick() },
       { id: "copy-email", title: "Copy Email (nikhilvce@gmail.com)", category: "Action", icon: "›", action: () => this.copyEmail() },
       { id: "contact", title: "Get in Touch / Book Advisory", category: "Contact", icon: "›", action: () => this.scrollTo("contact") }
     ];
