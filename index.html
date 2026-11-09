@@ -44,6 +44,7 @@
   <link rel="stylesheet" href="css/ideas.css">
   <link rel="stylesheet" href="css/bento.css">
   <link rel="stylesheet" href="css/resume-modal.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
@@ -128,14 +129,14 @@
         <div class="hero-grid">
           <div class="hero-content">
             <div class="hero-supertag">
-              <span>Lead Software Architect &amp; AI Systems Specialist</span>
+              <span data-editable="profile.title">Lead Software Architect &amp; AI Systems Specialist</span>
             </div>
 
             <h1 class="hero-headline">
               Engineering <span class="text-gradient-cyan">Scalable Intelligent Systems</span> at Global Financial Scale.
             </h1>
 
-            <p class="hero-bio">
+            <p class="hero-bio" data-editable="profile.elevatorPitch">
               Hi, I'm <strong>Nikhil Mothkuri</strong>. I am a Lead Software Architect at <strong>JPMorgan Chase &amp; Co.</strong>, with international engineering tenure across <strong>Dell Technologies (Ireland)</strong>, <strong>Oracle</strong>, and <strong>Infosys</strong>. I specialize in resilient distributed architectures, cloud-native scalability, and production AI/ML systems.
             </p>
 
@@ -680,6 +681,13 @@
       </div>
 
       <div class="footer-right">
+        <button class="btn-admin-trigger" id="admin-login-trigger" title="Admin Login &amp; Live Editor (Ctrl+Alt+A)" aria-label="Admin Login">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Admin</span>
+        </button>
         <button class="back-to-top-btn" id="back-to-top-btn">
           <span>Back to Top ↑</span>
         </button>
@@ -781,6 +789,115 @@
     </div>
   </div>
 
+  <!-- ===================================================================
+       ADMIN COMPONENT 1: FLOATING ADMIN HUD TOOLBAR
+       =================================================================== -->
+  <aside class="admin-hud" id="admin-floating-hud" aria-label="Admin Control Bar">
+    <div class="admin-hud-status">
+      <span class="admin-hud-dot" id="admin-hud-dot"></span>
+      <span id="admin-hud-status-text">Admin Active</span>
+    </div>
+    <div class="admin-hud-divider"></div>
+    <button class="admin-hud-btn" id="admin-hud-edit-btn" title="Open Structured Content Editor">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      <span>Edit Content</span>
+    </button>
+    <button class="admin-hud-btn" id="admin-hud-inline-btn" title="Toggle On-Page Visual Click &amp; Edit Mode">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="22" y1="12" x2="18" y2="12"></line>
+        <line x1="6" y1="12" x2="2" y2="12"></line>
+        <line x1="12" y1="6" x2="12" y2="2"></line>
+        <line x1="12" y1="22" x2="12" y2="18"></line>
+      </svg>
+      <span>Inline Edit</span>
+    </button>
+    <button class="admin-hud-btn publish" id="admin-hud-publish-btn" title="Commit &amp; Publish Changes to GitHub main">
+      <span>☁ Publish to Live Site</span>
+    </button>
+    <div class="admin-hud-divider"></div>
+    <button class="admin-hud-btn logout" id="admin-hud-logout-btn" title="Log Out of Admin Mode" aria-label="Log Out">
+      <span>✕</span>
+    </button>
+  </aside>
+
+  <!-- ===================================================================
+       ADMIN COMPONENT 2: ADMIN LOGIN MODAL
+       =================================================================== -->
+  <div class="modal-overlay" id="admin-login-modal" role="dialog" aria-modal="true" aria-label="Admin Login">
+    <div class="modal-box admin-login-box">
+      <button class="modal-close" id="admin-login-close" aria-label="Close modal">✕</button>
+      
+      <div class="admin-login-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+        </svg>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.4rem; color: var(--text-bright); margin-bottom: 6px;">Admin Authentication</h3>
+        <p style="font-size: 0.88rem; color: var(--text-secondary);">
+          Authenticate with your GitHub Access Token to edit and publish updates live to <strong>nikhilai.in</strong>.
+        </p>
+      </div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label class="form-label" for="admin-token-input">GitHub Personal Access Token (PAT)</label>
+          <div class="admin-password-wrap">
+            <input type="password" id="admin-token-input" class="form-control" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="current-password" required>
+            <button type="button" class="admin-toggle-pwd-btn" id="admin-toggle-pwd">Show</button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+          <input type="checkbox" id="admin-remember-token" checked style="cursor: pointer; accent-color: var(--apple-blue);">
+          <label for="admin-remember-token" style="font-size: 0.82rem; color: var(--text-secondary); cursor: pointer;">Remember authentication on this device</label>
+        </div>
+
+        <div id="admin-login-error" style="display: none; padding: 10px 14px; background: rgba(255, 69, 58, 0.12); border: 1px solid rgba(255, 69, 58, 0.25); border-radius: var(--radius-sm); color: var(--apple-red); font-size: 0.8rem; margin-bottom: 16px;"></div>
+
+        <button type="submit" class="btn btn-primary" id="admin-login-submit-btn" style="width: 100%;">
+          Authenticate &amp; Enter Admin Mode
+        </button>
+      </form>
+
+      <div class="admin-token-help">
+        <strong>Need a token?</strong>
+        <p style="margin-top: 4px;">
+          Generate one in 1 click at <a href="https://github.com/settings/tokens/new?scopes=repo&amp;description=NikhilProfile+Admin+Editor" target="_blank" rel="noopener">GitHub Settings → Tokens</a> with the <code>repo</code> write permission.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       ADMIN COMPONENT 3: STRUCTURED CONTENT EDITOR MODAL
+       =================================================================== -->
+  <div class="modal-overlay" id="admin-editor-modal" role="dialog" aria-modal="true" aria-label="Content Editor">
+    <div class="modal-box admin-modal-box">
+      <button class="modal-close" id="admin-editor-close" aria-label="Close modal">✕</button>
+      
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <span>⚙ Portfolio Content Inspector</span>
+          <span style="font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-full); background: var(--apple-blue-subtle); color: var(--apple-blue); font-weight: 500;">Live Preview</span>
+        </div>
+      </div>
+
+      <nav class="admin-tabs-nav" id="admin-tabs-nav" aria-label="Editor sections">
+        <!-- Injected dynamically by admin.js -->
+      </nav>
+
+      <div id="admin-tab-content-area">
+        <!-- Injected dynamically by admin.js -->
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
@@ -792,6 +909,7 @@
   <script src="js/command-palette.js"></script>
   <script src="js/resume-modal.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
 
 </body>
 </html>
