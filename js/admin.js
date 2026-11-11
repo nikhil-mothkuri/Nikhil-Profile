@@ -954,3 +954,4 @@ const PORTFOLIO_DATA = ${JSON.stringify(this.data, null, 2)};
 window.addEventListener("DOMContentLoaded", () => {
   window.adminManager = new AdminManager();
 });
+
