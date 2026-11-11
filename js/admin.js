@@ -28,7 +28,36 @@ class AdminManager {
     // Check for saved drafts
     this.loadDraftData();
 
-    // Check stored token
+    // Check Cloud Firestore for live dynamic portfolio data
+    if (window.cmsService) {
+      try {
+        const liveData = await window.cmsService.getPortfolioData();
+        if (liveData && liveData.profile) {
+          this.data = Object.assign({}, this.data, liveData);
+          if (typeof window !== "undefined" && window.PORTFOLIO_DATA) {
+            Object.assign(window.PORTFOLIO_DATA, this.data);
+          }
+          this.refreshAllComponents();
+        }
+      } catch (e) {
+        console.warn("Could not sync Firestore on init:", e);
+      }
+    }
+
+    // Check Firebase Auth state
+    if (window.firebaseService) {
+      window.firebaseService.onAuthStateChanged(user => {
+        if (user && window.firebaseService.isAdmin(user)) {
+          this.firebaseUser = user;
+          this.user = { name: user.displayName || "Nikhil", email: user.email };
+          this.enableAdminMode(false);
+        } else if (!this.token) {
+          this.disableAdminMode();
+        }
+      });
+    }
+
+    // Check stored PAT token fallback
     const savedToken = localStorage.getItem(this.STORAGE_TOKEN_KEY);
     if (savedToken) {
       this.token = savedToken;
@@ -124,7 +153,7 @@ class AdminManager {
 
     // Password Toggle in Login
     const togglePwd = document.getElementById("admin-toggle-pwd");
-    const pwdInput = document.getElementById("admin-token-input");
+    const pwdInput = document.getElementById("admin-password-input") || document.getElementById("admin-token-input");
     if (togglePwd && pwdInput) {
       togglePwd.addEventListener("click", () => {
         const type = pwdInput.getAttribute("type") === "password" ? "text" : "password";
@@ -133,12 +162,49 @@ class AdminManager {
       });
     }
 
-    // Login Form Submit
+    // 1-Click Google Sign-In
+    const googleBtn = document.getElementById("admin-google-btn");
+    if (googleBtn) {
+      googleBtn.addEventListener("click", async () => {
+        const errorEl = document.getElementById("admin-login-error");
+        if (errorEl) errorEl.style.display = "none";
+        try {
+          if (!window.firebaseService) throw new Error("Firebase service not initialized.");
+          const res = await window.firebaseService.signInWithGoogle();
+          if (res.user && window.firebaseService.isAdmin(res.user)) {
+            this.firebaseUser = res.user;
+            this.user = { name: res.user.displayName || "Nikhil", email: res.user.email };
+            this.closeLoginModal();
+            this.enableAdminMode(true);
+          } else {
+            if (errorEl) {
+              errorEl.textContent = `Signed in as ${res.user.email}, but this account is not the designated admin (${window.firebaseService.adminEmail}).`;
+              errorEl.style.display = "block";
+            }
+          }
+        } catch (err) {
+          if (errorEl) {
+            errorEl.textContent = err.message;
+            errorEl.style.display = "block";
+          }
+        }
+      });
+    }
+
+    // Login Form Submit (Email & Password)
     const loginForm = document.getElementById("admin-login-form");
     if (loginForm) {
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         await this.handleLoginSubmit();
+      });
+    }
+
+    // Alternate PAT Submit
+    const patBtn = document.getElementById("admin-pat-submit-btn");
+    if (patBtn) {
+      patBtn.addEventListener("click", async () => {
+        await this.handlePatLoginSubmit();
       });
     }
 
@@ -197,17 +263,17 @@ class AdminManager {
   }
 
   async handleLoginSubmit() {
-    const input = document.getElementById("admin-token-input");
-    const rememberCheckbox = document.getElementById("admin-remember-token");
+    const emailInput = document.getElementById("admin-email-input");
+    const pwdInput = document.getElementById("admin-password-input");
     const errorEl = document.getElementById("admin-login-error");
     const submitBtn = document.getElementById("admin-login-submit-btn");
 
-    if (!input) return;
-    const tokenVal = input.value.trim();
+    const email = emailInput ? emailInput.value.trim() : "";
+    const password = pwdInput ? pwdInput.value : "";
 
-    if (!tokenVal) {
+    if (!email || !password) {
       if (errorEl) {
-        errorEl.textContent = "Please enter a GitHub Personal Access Token.";
+        errorEl.textContent = "Please enter both email and password.";
         errorEl.style.display = "block";
       }
       return;
@@ -215,31 +281,61 @@ class AdminManager {
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = "Authenticating...";
+      submitBtn.innerHTML = "Signing in...";
     }
     if (errorEl) errorEl.style.display = "none";
 
-    const isValid = await this.validateToken(tokenVal, true);
-
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = "Authenticate &amp; Enter Admin Mode";
+    try {
+      if (window.firebaseService && window.firebaseService.isConfigured()) {
+        const cred = await window.firebaseService.signInWithEmail(email, password);
+        if (cred.user && window.firebaseService.isAdmin(cred.user)) {
+          this.firebaseUser = cred.user;
+          this.user = { name: cred.user.displayName || "Nikhil", email: cred.user.email };
+          this.closeLoginModal();
+          this.enableAdminMode(true);
+        } else {
+          throw new Error(`Signed in as ${cred.user.email}, but this account is not the designated admin.`);
+        }
+      } else {
+        // Fallback demo/local admin mode
+        if (email.toLowerCase() === "nikhilvce@gmail.com") {
+          this.user = { name: "Nikhil Mothkuri", email: "nikhilvce@gmail.com" };
+          this.closeLoginModal();
+          this.enableAdminMode(true);
+          if (window.app) {
+            window.app.showToast("Admin Mode active. Configure keys in js/firebase-config.js for live cloud sync.", "emerald");
+          }
+        } else {
+          throw new Error("Admin email must be nikhilvce@gmail.com");
+        }
+      }
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = "block";
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "Enter Admin Mode";
+      }
     }
+  }
 
+  async handlePatLoginSubmit() {
+    const input = document.getElementById("admin-token-input");
+    const errorEl = document.getElementById("admin-login-error");
+    if (!input || !input.value.trim()) return;
+    const tokenVal = input.value.trim();
+    const isValid = await this.validateToken(tokenVal, true);
     if (isValid) {
       this.token = tokenVal;
-      if (rememberCheckbox && rememberCheckbox.checked) {
-        localStorage.setItem(this.STORAGE_TOKEN_KEY, tokenVal);
-      } else {
-        sessionStorage.setItem(this.STORAGE_TOKEN_KEY, tokenVal);
-      }
-
+      localStorage.setItem(this.STORAGE_TOKEN_KEY, tokenVal);
       this.closeLoginModal();
       this.enableAdminMode(true);
-      input.value = "";
     } else {
       if (errorEl) {
-        errorEl.innerHTML = "Authentication failed. Ensure the token has <code>repo</code> write scope for <strong>nikhil-mothkuri/Nikhil-Profile</strong>.";
+        errorEl.textContent = "Invalid token or missing write permissions.";
         errorEl.style.display = "block";
       }
     }
@@ -258,17 +354,23 @@ class AdminManager {
     }
   }
 
-  logout() {
+  disableAdminMode() {
+    if (this.isInlineEditing) this.toggleInlineEditing(false);
+    const hud = document.getElementById("admin-floating-hud");
+    if (hud) hud.classList.remove("visible");
+  }
+
+  async logout() {
+    if (window.firebaseService) {
+      await window.firebaseService.signOut();
+    }
+    this.firebaseUser = null;
     this.token = null;
     this.user = null;
     localStorage.removeItem(this.STORAGE_TOKEN_KEY);
     sessionStorage.removeItem(this.STORAGE_TOKEN_KEY);
 
-    if (this.isInlineEditing) this.toggleInlineEditing(false);
-
-    const hud = document.getElementById("admin-floating-hud");
-    if (hud) hud.classList.remove("visible");
-
+    this.disableAdminMode();
     this.closeEditorModal();
 
     if (window.app) window.app.showToast("Logged out of Admin Mode.", "blue");
@@ -857,22 +959,79 @@ class AdminManager {
   }
 
   /* ===================================================================
-     1-CLICK GITHUB PUBLISHER
-     Commits directly to main branch via GitHub Contents API
+     DYNAMIC CLOUD & GITHUB PUBLISHER
+     Saves directly to Cloud Firestore or commits via GitHub API
      =================================================================== */
   async handlePublishClick() {
-    if (!this.token) {
+    if (!this.token && !this.firebaseUser && !this.user) {
       this.openLoginModal();
       return;
     }
 
-    const defaultMsg = `Update site content via Admin Editor (${new Date().toLocaleDateString()})`;
-    const commitMsg = prompt("Enter commit message for GitHub deployment:", defaultMsg);
-    if (!commitMsg) return; // User cancelled
-
     const publishBtn = document.getElementById("admin-hud-publish-btn");
     if (publishBtn) {
       publishBtn.disabled = true;
+      publishBtn.innerHTML = `<span>Saving changes...</span>`;
+    }
+
+    // Ensure this.data retains all structural sections before saving
+    const baseData = (typeof window !== "undefined" && window.PORTFOLIO_DATA) || 
+                     (typeof PORTFOLIO_DATA !== "undefined" ? PORTFOLIO_DATA : {});
+    const mergedData = Object.assign({}, baseData, this.data);
+    if (baseData.profile && this.data.profile) {
+      mergedData.profile = Object.assign({}, baseData.profile, this.data.profile);
+    }
+    this.data = mergedData;
+
+    // 1. Try Firebase Cloud Firestore live save first (Instant, $0 cost, no git commit needed)
+    if (window.cmsService && window.firebaseService && window.firebaseService.isConfigured()) {
+      try {
+        await window.cmsService.savePortfolioData(this.data);
+        this.hasUnsavedChanges = false;
+        localStorage.removeItem(this.STORAGE_DRAFT_KEY);
+        this.updateHudStatus();
+
+        if (publishBtn) {
+          publishBtn.disabled = false;
+          publishBtn.innerHTML = `<span>Save &amp; Publish</span>`;
+        }
+
+        if (window.app) {
+          window.app.showToast("Saved dynamically to Cloud Firestore! Live immediately.", "emerald");
+        }
+        return;
+      } catch (err) {
+        console.warn("Firestore save error, falling back to GitHub/Local:", err);
+      }
+    }
+
+    // 2. If no GitHub token available, save draft locally
+    if (!this.token) {
+      localStorage.setItem(this.STORAGE_DRAFT_KEY, JSON.stringify(this.data));
+      this.hasUnsavedChanges = false;
+      this.updateHudStatus();
+      if (publishBtn) {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = `<span>Save &amp; Publish</span>`;
+      }
+      if (window.app) {
+        window.app.showToast("Saved locally. Enter your Firebase project keys in js/firebase-config.js to sync live to cloud.", "blue");
+      }
+      return;
+    }
+
+    // 3. Fallback to GitHub Commit API
+    const defaultMsg = `Update site content via Admin Editor (${new Date().toLocaleDateString()})`;
+    const commitMsg = prompt("Enter commit message for GitHub deployment:", defaultMsg);
+    if (!commitMsg) {
+      if (publishBtn) {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = `<span>Save &amp; Publish</span>`;
+      }
+      return;
+    }
+
+    if (publishBtn) {
       publishBtn.innerHTML = `<span>Uploading to GitHub...</span>`;
     }
 

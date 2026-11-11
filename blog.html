@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architectural Notes &amp; Insights &mdash; Nikhil Mothkuri</title>
+  <meta name="description" content="Essays and technical perspectives on enterprise distributed systems, cloud microservices, and autonomous AI agents by Nikhil Mothkuri.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="blog">
+  <meta property="og:title" content="Architectural Notes &amp; Insights &mdash; Nikhil Mothkuri">
+  <meta property="og:description" content="Essays and technical perspectives on enterprise distributed systems, cloud microservices, and autonomous AI agents.">
+  <meta property="og:image" content="assets/avatar.jpg?v=3">
+
+  <!-- Immediate Theme Initializer: Default Light Theme without FOUC -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('nikhil_portfolio_theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <!-- Apple SF Pro Fallback: Inter Variable with Optical Sizing (opsz 14..32) & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/blog.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Ambient Light Overlays -->
+  <div class="ambient-glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow-2" aria-hidden="true"></div>
+
+  <!-- ===================================================================
+       HEADER & NAVIGATION (APPLE GLOBAL NAV)
+       =================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" id="brand-logo-link">
+        <span>NIKHIL MOTHKURI</span>
+        <span class="brand-badge">ARCHITECT</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links" id="main-nav-links">
+          <li><a href="index.html#about" class="nav-link">About</a></li>
+          <li><a href="index.html#career-metro" class="nav-link">Experience</a></li>
+          <li><a href="index.html#thought-radar" class="nav-link">Insights</a></li>
+          <li><a href="blog.html" class="nav-link active" style="color: var(--apple-blue); font-weight: 600;">Blog</a></li>
+          <li><a href="index.html#endorsements" class="nav-link">Testimonials</a></li>
+          <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="status-pill" title="Current Career Status">
+          <span class="status-dot"></span>
+          <span>Available for Advisory</span>
+        </div>
+
+        <!-- Apple Light / Dark Theme Toggle Button -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Switch Theme" aria-label="Toggle light and dark themes">
+          <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="2" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <button class="mobile-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       BLOG APPLICATION MOUNT POINT
+       =================================================================== -->
+  <div id="blog-app-container"></div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <span>NIKHIL MOTHKURI</span>
+            <span class="brand-badge">ARCHITECT</span>
+          </div>
+          <p class="footer-tagline">
+            Engineering resilient distributed financial architectures &amp; production AI systems across global enterprises.
+          </p>
+        </div>
+
+        <div class="footer-links-group">
+          <div class="footer-col">
+            <span class="footer-heading">Navigation</span>
+            <ul class="footer-links">
+              <li><a href="index.html">Portfolio Home</a></li>
+              <li><a href="index.html#career-metro">Experience Metro</a></li>
+              <li><a href="blog.html">Technical Blog</a></li>
+              <li><a href="index.html#contact">Get in Touch</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <span class="footer-heading">Connect</span>
+            <ul class="footer-links">
+              <li><a href="https://www.linkedin.com/in/nikhil-mothkuri-a3887747/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a href="https://github.com/nikhil-mothkuri" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="mailto:nikhilvce@gmail.com">nikhilvce@gmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">
+          &copy; 2026 Nikhil Mothkuri. Handcrafted with Apple Human Interface Guidelines &amp; Vanilla Web Technologies.
+        </p>
+        <div class="footer-legal">
+          <span>Hyderabad &bull; Ireland &bull; Global</span>
+          <span class="footer-separator">&bull;</span>
+          <a href="javascript:void(0)" id="admin-login-trigger" style="color: var(--text-muted); font-size: 0.76rem; text-decoration: none;">Admin Access</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase Web SDK Compat (CDN, zero build tools needed) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Services & Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/cms-service.js"></script>
+  <script src="js/comments.js"></script>
+  <script src="js/blog.js"></script>
+
+  <!-- Lightweight Toast Helper for blog page -->
+  <script>
+    window.app = {
+      showToast: function(message, type = 'blue') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.innerHTML = '<span>' + message + '</span>';
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('visible'), 20);
+        setTimeout(() => {
+          toast.classList.remove('visible');
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+    };
+
+    // Header scroll background effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('site-header');
+      if (header) {
+        if (window.scrollY > 30) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+      }
+    });
+
+    // Theme Toggle Handler
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('nikhil_portfolio_theme', next);
+      });
+    }
+
+    // Mobile Navigation Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('main-nav-links');
+    if (mobileBtn && navLinks) {
+      mobileBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+    }
+  </script>
+</body>
+</html>
