@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the caller is the portfolio administrator
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email.lower() == 'nikhilvce@gmail.com';
+    }
+
+    // 1. Dynamic Portfolio Content
+    // Read: public (anyone visiting nikhilai.in)
+    // Write: administrator only (nikhilvce@gmail.com)
+    match /portfolio/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 2. Blog Posts & Articles
+    // Read: public (anyone visiting nikhilai.in/blog.html)
+    // Write: administrator only (nikhilvce@gmail.com)
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 3. Reader Discussion Comments
+    // Read: public (anyone reading comments)
+    // Create: any authenticated reader who logged in with Email or Google
+    // Delete/Update: comment author or administrator
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin() || (request.auth != null && request.auth.uid == resource.data.authorId);
+    }
+  }
+}
