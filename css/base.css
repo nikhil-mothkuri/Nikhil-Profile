@@ -18,6 +18,9 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+  font-optical-sizing: auto;
+  letter-spacing: var(--tracking-normal);
   transition: var(--transition-theme);
 }
 
@@ -29,9 +32,11 @@ body {
   background-color: var(--bg-canvas);
   background-image: 
     radial-gradient(ellipse 70% 40% at 50% 0%, rgba(var(--apple-blue-rgb), 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 30% at 80% 25%, rgba(var(--apple-purple-rgb), 0.03) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 30% at 85% 20%, rgba(var(--apple-purple-rgb), 0.035) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 15% 45%, rgba(var(--apple-orange-rgb), 0.025) 0%, transparent 50%);
   background-attachment: scroll;
   color: var(--text-primary);
+  letter-spacing: var(--tracking-normal);
   transition: var(--transition-theme);
 }
 
@@ -83,8 +88,21 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.15;
   color: var(--text-bright);
-  letter-spacing: -0.025em;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
   transition: color var(--transition-fast);
+}
+
+h1 {
+  letter-spacing: var(--tracking-tighter);
+}
+
+h2 {
+  letter-spacing: var(--tracking-tight);
+}
+
+h3, h4 {
+  letter-spacing: var(--tracking-snug);
 }
 
 p {
@@ -92,6 +110,7 @@ p {
   font-size: 1.05rem;
   line-height: 1.65;
   font-weight: 400;
+  letter-spacing: var(--tracking-normal);
   transition: color var(--transition-fast);
 }
 

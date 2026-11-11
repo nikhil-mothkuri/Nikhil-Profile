@@ -3,7 +3,7 @@
    Nikhil Mothkuri's Professional Profile & Career Journey
    =================================================================== */
 
-const PORTFOLIO_DATA = {
+window.PORTFOLIO_DATA = {
   profile: {
     name: "Nikhil",
     fullName: "Nikhil Mothkuri",
@@ -408,3 +408,5 @@ const PORTFOLIO_DATA = {
     }
   ]
 };
+
+var PORTFOLIO_DATA = window.PORTFOLIO_DATA;
