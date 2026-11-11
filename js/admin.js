@@ -14,7 +14,9 @@ class AdminManager {
 
     this.token = null;
     this.user = null;
-    this.data = JSON.parse(JSON.stringify(window.PORTFOLIO_DATA || {}));
+    const baseSource = (typeof window !== "undefined" && window.PORTFOLIO_DATA) || 
+                       (typeof PORTFOLIO_DATA !== "undefined" ? PORTFOLIO_DATA : {});
+    this.data = JSON.parse(JSON.stringify(baseSource));
     this.isInlineEditing = false;
     this.hasUnsavedChanges = false;
     this.activeTab = "profile";
@@ -49,11 +51,16 @@ class AdminManager {
       const draft = localStorage.getItem(this.STORAGE_DRAFT_KEY);
       if (draft) {
         const parsed = JSON.parse(draft);
-        if (parsed && parsed.profile) {
-          this.data = parsed;
+        if (parsed && typeof parsed === "object") {
+          // Merge draft safely over this.data so missing sections are never lost
+          this.data = Object.assign({}, this.data, parsed);
+          if (parsed.profile) {
+            this.data.profile = Object.assign({}, this.data.profile || {}, parsed.profile);
+          }
           this.hasUnsavedChanges = true;
-          // Apply draft to window.PORTFOLIO_DATA
-          Object.assign(window.PORTFOLIO_DATA, this.data);
+          if (typeof window !== "undefined" && window.PORTFOLIO_DATA) {
+            Object.assign(window.PORTFOLIO_DATA, this.data);
+          }
           this.refreshAllComponents();
         }
       }
@@ -807,7 +814,9 @@ class AdminManager {
   resetDraft() {
     if (confirm("Discard all unpublished drafts and restore original content from GitHub?")) {
       localStorage.removeItem(this.STORAGE_DRAFT_KEY);
-      this.data = JSON.parse(JSON.stringify(window.PORTFOLIO_DATA));
+      const baseSource = (typeof window !== "undefined" && window.PORTFOLIO_DATA) || 
+                         (typeof PORTFOLIO_DATA !== "undefined" ? PORTFOLIO_DATA : {});
+      this.data = JSON.parse(JSON.stringify(baseSource));
       this.hasUnsavedChanges = false;
       this.refreshAllComponents();
       this.updateHudStatus();
@@ -883,13 +892,23 @@ class AdminManager {
       const fileMeta = await getRes.json();
       const currentSha = fileMeta.sha;
 
+      // Ensure this.data retains all structural sections before publishing
+      const baseData = (typeof window !== "undefined" && window.PORTFOLIO_DATA) || 
+                       (typeof PORTFOLIO_DATA !== "undefined" ? PORTFOLIO_DATA : {});
+      const mergedData = Object.assign({}, baseData, this.data);
+      if (baseData.profile && this.data.profile) {
+        mergedData.profile = Object.assign({}, baseData.profile, this.data.profile);
+      }
+      this.data = mergedData;
+
       // 2. Format JS code
       const jsCode = `/* ===================================================================
    DATA ARCHITECTURE & PORTFOLIO DATA STORE
    Nikhil Mothkuri's Professional Profile & Career Journey
    =================================================================== */
 
-const PORTFOLIO_DATA = ${JSON.stringify(this.data, null, 2)};
+window.PORTFOLIO_DATA = ${JSON.stringify(this.data, null, 2)};
+var PORTFOLIO_DATA = window.PORTFOLIO_DATA;
 `;
 
       // 3. UTF-8 Safe Base64 Encoding
